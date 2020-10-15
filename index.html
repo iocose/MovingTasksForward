@@ -1,0 +1,141 @@
+<html>
+  <head>
+    <title>IOCOSE - Moving Tasks Forward</title>
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+  <script src="https://api.trello.com/1/client.js?key=YOUR_TRELLO_API_KEY"></script>
+  <script>
+
+  /*
+
+  _____ _____ _____ _____ _____ _____                                                              
+  |_   _|  _  /  __ \  _  /  ___|  ___|                                                             
+    | | | | | | /  \/ | | \ `--.| |__                                                               
+    | | | | | | |   | | | |`--. \  __|                                                              
+  _| |_\ \_/ / \__/\ \_/ /\__/ / |___                                                              
+  \___/ \___/ \____/\___/\____/\____/                                                              
+                                                                                                    
+                                                                                                    
+  ___  ___           _               _____         _         ______                               _ 
+  |  \/  |          (_)             |_   _|       | |        |  ___|                             | |
+  | .  . | _____   ___ _ __   __ _    | | __ _ ___| | _____  | |_ ___  _ ____      ____ _ _ __ __| |
+  | |\/| |/ _ \ \ / / | '_ \ / _` |   | |/ _` / __| |/ / __| |  _/ _ \| '__\ \ /\ / / _` | '__/ _` |
+  | |  | | (_) \ V /| | | | | (_| |   | | (_| \__ \   <\__ \ | || (_) | |   \ V  V / (_| | | | (_| |
+  \_|  |_/\___/ \_/ |_|_| |_|\__, |   \_/\__,_|___/_|\_\___/ \_| \___/|_|    \_/\_/ \__,_|_|  \__,_|
+                              __/ |                                                                 
+                            |___/                                                                  
+
+  */
+
+  // ID of the Trello Board containing the tasks that you want to move forward.
+  const BOARD_TO_MOVE_FORWARD_ID = "YOUR_BOARD_ID";
+
+  // Update interval. The faster the closer to the future.
+  const UPDATE_INTERVAL_MILLISEC = 5000;
+
+  const moveCardForward = (card_id, destination_list_id) => {
+    return Trello.put(`cards/${card_id}/?idList=${destination_list_id}`,
+      (res) => {
+        console.log("moved")
+      },
+      (err) => {
+        console.error(err);
+        console.error("I can not move the card");
+      }
+    );
+
+  }
+
+  const getCardsForListId = function(listId, nextListId) {
+    return Trello.get(`lists/${listId}/cards`,
+      (cards) => {
+        cards.forEach((card) => {
+          moveCardForward(card.id, nextListId)
+        })
+      },
+      (err) => {
+        console.error(err);
+        console.error("I can not retrieve the cards in your lists");
+      }
+    );
+  }
+
+  const moveCardClosure = (lists) => {
+    const res = () => {
+      for (let currentListIndex = 0; currentListIndex < lists.length; currentListIndex ++) {
+        const nextListIndex = (currentListIndex+1) % lists.length;
+        getCardsForListId(lists[currentListIndex].id, lists[nextListIndex].id);
+      }
+    }
+    return res;
+  }
+
+  const moveCardsForward = function(lists){
+    setInterval(moveCardClosure(lists), UPDATE_INTERVAL_MILLISEC);
+  };
+
+  const getListIds = function(board_id) {
+    return Trello.get(`boards/${board_id}/lists`,
+      (lists) => {
+        console.log(lists)
+        moveCardsForward(lists);
+      },
+      (err) => {
+        console.error(err);
+        console.error("I can not retrieve the lists in your board");
+      }
+    );
+  }
+
+  const getBoardsId = function(board_id) {
+    return Trello.get("members/me",
+      (res) => {
+        if (res.idBoards.indexOf(board_id)){
+          getListIds(board_id);
+        } else {
+          console.error(`board with id ${board_id} not found`);
+        }
+
+      },
+      (err) => {
+        console.error(err);
+        console.error("I can not retrieve your boards");
+      }
+    );
+  }
+
+  const init = function(){
+    getBoardsId(BOARD_TO_MOVE_FORWARD_ID);
+  };
+
+
+  const authenticationSuccess = function() {
+    console.log('Authentication OK');
+    console.log('Start moving your tasks forward');
+    init();
+  };
+
+  const authenticationFailure = function(err) {
+    console.error(err);
+    console.error('Failed authentication');
+  };
+
+  window.Trello.authorize({
+    type: 'popup',
+    name: 'Getting Started Application',
+    scope: {
+      read: 'true',
+      write: 'true' },
+    expiration: 'never',
+    success: authenticationSuccess,
+    error: authenticationFailure
+  });
+
+
+  </script>
+  </head>
+  <body>
+  </body>
+</html>
