@@ -4,6 +4,7 @@
 ![cover](cover.jpg)
 
 ## Requirements
+
 - 1. You need to be able to run a local server. If you do not have it, have a look at this [quick ways](https://github.com/processing/p5.js/wiki/Local-server) to run a local webserver.
 
 - 2. You need a Trello Account containing the board with your tasks, and an [API key](https://trello.com/app-key). As "allowed origin" for that API Key, enter the address of your local server, for example `http://localhost:5000`.
