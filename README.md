@@ -9,7 +9,7 @@
 
 - 2. You need a Trello Account containing the board with your tasks, and an [API key](https://trello.com/app-key). As "allowed origin" for that API Key, enter the address of your local server, for example `http://localhost:5000`.
 
-- 3. Get the long ID of the board containing the tasks that you want to move forward. As explained in this [post](https://community.atlassian.com/t5/Trello-questions/How-to-get-Trello-Board-ID/qaq-p/1347525), an easy way to find the long ID of your board is to append `.json` to the URL of your board. For Example, if the URL  of your board is `https://trello.com/b/xxxxxxxx/things-to-do`, then at the URL `https://trello.com/b/xxxxxxxx/things-to-do.json` you can find the id. It is the first value in the JSON response.
+- 3. Get the long ID of the board containing the tasks that you want to move forward. As explained in this [post](https://community.atlassian.com/t5/Trello-questions/How-to-get-Trello-Board-ID/qaq-p/1347525), an easy way to find the long ID of your board is to append `.json` to the URL of your board. For Example, if the URL  of your board is `https://trello.com/b/xxxxxxxx/things-to-do`, then the long ID of your board can be found at the URL `https://trello.com/b/xxxxxxxx/things-to-do.json`. It is the first value in the JSON response.
 
 ## Installation
 
